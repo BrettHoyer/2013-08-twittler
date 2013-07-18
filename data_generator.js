@@ -38,11 +38,13 @@ var randomMessage = function(){
 };
 
 // generate random tweets on a random schedule
+var count = 0
 var generateRandomTweet = function(){
   var tweet = {};
   tweet.user = randomElement(users);
   tweet.message = randomMessage();
   tweet.created_at = new Date();
+  tweet.count = count+=1
   addTweet(tweet);
 };
 
@@ -58,6 +60,7 @@ scheduleNextTweet();
 
 // utility function for letting students add "write a tweet" functionality
 // (note: not used by the rest of this file.)
+
 var writeTweet = function(message){
   if(!visitor){
     throw new Error('set the global visitor property!');
@@ -65,5 +68,6 @@ var writeTweet = function(message){
   var tweet = {};
   tweet.user = visitor;
   tweet.message = message;
+  tweet.count = 1;
   addTweet(tweet);
 };
