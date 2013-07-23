@@ -13,39 +13,53 @@
     <script>
 
       $(document).ready(function(){
-        var $tweetsContainer = $('div#tweets-container')
-        var index = streams.home.length - 1;
-        var lowEnd = streams.home.length - 1;
-        while(index >= 0){
-          var tweet = streams.home[index];
-          var $tweet = $('<div></div>');
-          var createdAt = moment(tweet.created_at).fromNow();
-          $tweet.text('@' + tweet.user + ': ' + tweet.count).attr("time", tweet.created_at);
-          $tweet.append(" <span class='created_at'>" + createdAt + "</span>")
-          $tweet.appendTo($tweetsContainer);
-          index -= 1;
-        }
-        setInterval(function(){
-        index = streams.home.length - 1;
-        while(index > lowEnd){
-          var tweet = streams.home[index];
-          var $tweet = $('<div class="new-tweet"></div>');
-          var createdAt = moment(tweet.created_at).fromNow();
-          $tweet.text('@' + tweet.user + ': ' + tweet.count).attr("time", tweet.created_at);
-          $tweet.append(" <span class='created_at'>" + createdAt + "</span>")
-          $tweet.prependTo($tweetsContainer);
-          index -= 1;
-        }
-         lowEnd = streams.home.length -1
-      },1500);
+        var pageSetUp = function(tweets_array){
+          var $tweetsContainer = $('div#tweets-container')
+          var index = tweets_array.length - 1;
+          var lowEnd = tweets_array.length - 1;
+          while(index >= 0){
+            var tweet = tweets_array[index];
+            var $tweet = $('<div class="tweet"></div>');
+            var createdAt = moment(tweet.created_at).fromNow();
+            $tweet.text(': ' + tweet.message).attr("time", tweet.created_at);
+            $tweet.prepend("<a href='#' class='username' name=" + tweet.user + ">" + "@" + tweet.user + "</a> ")
+            $tweet.append(" <span class='created_at'>" + createdAt + "</span>")
+            $tweet.appendTo($tweetsContainer);
+            index -= 1;
+          }
+          setInterval(function(){
+          index = tweets_array.length - 1;
+          while(index > lowEnd){
+            var tweet = tweets_array[index];
+            var $tweet = $('<div class="tweet new-tweet"></div>');
+            var createdAt = moment(tweet.created_at).fromNow();
+            $tweet.text(': ' + tweet.message).attr("time", tweet.created_at);
+            $tweet.prepend("<a href='#' class='username' name=" + tweet.user + ">" + "@" + tweet.user + "</a> ")
+            $tweet.append(" <span class='created_at'>" + createdAt + "</span>")
+            $tweet.prependTo($tweetsContainer);
+            index -= 1;
+          }
+           lowEnd = tweets_array.length -1
+        },1500);
 
-        $('#new-tweets-button').on("click", function(){
-          $('.new-tweet').show().removeClass('new-tweet')
-          $('.created_at').each(function(){
-            $(this).text(moment($(this).closest('div').attr("time")).fromNow())
+          $('#new-tweets-button').on("click", function(){ 
+            // $('.tweet').show()
+            $('.new-tweet').slideDown().removeClass('new-tweet')
+            $('.created_at').each(function(){
+              $(this).text(moment($(this).closest('div').attr("time")).fromNow())
+            })
           })
-        })
 
+          $('a').on("click", function(e){
+          e.preventDefault();
+            $userTimeline = $(this).attr('name');
+            $('.tweet').hide()
+            $("[name='" + $userTimeline + "']").show()
+            console.log($userTimeline)
+            pageSetUp(streams.users[$userTimeline])
+          })
+       };
+       pageSetUp(streams.home) 
       });
 
     </script>
